@@ -51,7 +51,7 @@ namespace TierSpawnConfig
             tier1EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 1", 50, new ConfigDescription("How many tier 1 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
             tier2EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 2", 50, new ConfigDescription("How many tier 2 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
             tier3EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 3", 50, new ConfigDescription("How many tier 3 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
-            blacklistedEnemies = StaticConfig.Bind("Spawn Count", "Blacklisted Groups", "Enemy - Hidden", "Which enemy groups should be disabled? This is a comma-separated list of enemy spawn groups. For the full list check the mod's thunderstore page.");
+            blacklistedEnemies = StaticConfig.Bind("Spawn Count", "Blacklisted Groups", "Enemy - Ceiling Eye,Enemy - Hidden", "Which enemy groups should be disabled? This is a comma-separated list of enemy spawn groups. For the full list check the mod's thunderstore page.");
             
             closestSpawnPoints = StaticConfig.Bind("Spawn Location", "Prioritize Closest Points", true, "Reverse the order that spawn points are picked from. If enabled, the closest spawn points will be used first, otherwise the furthest ones will be used first.");
             skipCollisionCheck = StaticConfig.Bind("Spawn Location", "Bypass Collision Check", true, "Should enemies be able to spawn on top of each other?");
@@ -78,7 +78,7 @@ namespace TierSpawnConfig
             
             overlayEnabled = StaticConfig.Bind("Overlay", "Enabled", true, "Should the overlay be shown?");
             
-            GameObject testerOverlayObj = new GameObject("TesterOverlay");
+            GameObject testerOverlayObj = new GameObject("TSCOverlay");
             testerOverlayObj.hideFlags = HideFlags.HideAndDontSave;
             DontDestroyOnLoad(testerOverlayObj);
             testerOverlayObj.AddComponent<TesterOverlay>();
