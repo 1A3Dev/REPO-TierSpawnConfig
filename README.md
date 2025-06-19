@@ -14,6 +14,8 @@ This mod was mainly designed to allow streamers to increase enemy spawns as a ch
 - How long it takes for enemies to respawn
 - Which spawn groups should be disabled - for example `Enemy - Thin Man,Enemy - Slow Walker` would stop the shadow child and trudge from spawning
 
+> Note: In multiplayer there is a limit of 1000 networked objects, if 900 objects is reached the mod will stop spawning enemies to prevent an exception happening!
+
 ### Enemy Spawn Groups
 
 You can view the latest list of the latest enemy spawn groups at: https://1a3.uk/games/repo/diffs/beta?tab=3&tabEnemies=1

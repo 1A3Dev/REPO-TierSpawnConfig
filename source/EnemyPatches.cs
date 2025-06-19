@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Photon.Pun;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,6 +11,8 @@ namespace TierSpawnConfig
     [HarmonyPatch]
     public class EnemyPatches
     {
+	    private static readonly int reservedViewCount = 100; // Reserve 100 photon views for other objects
+	    
 	    [HarmonyPatch(typeof(EnemyDirector), "FirstSpawnPointAdd")]
 	    [HarmonyPrefix]
 	    private static bool EnemyDirector_FirstSpawnPointAdd(EnemyDirector __instance, EnemyParent _enemyParent)
@@ -184,6 +187,26 @@ namespace TierSpawnConfig
 			    }
 		    }
 		    __result = false;
+		    return false;
+	    }
+
+	    private static bool viewCountWarning;
+	    [HarmonyPatch(typeof(LevelGenerator), "EnemySpawn")]
+	    [HarmonyPrefix]
+	    private static bool LevelGenerator_EnemySpawn(LevelGenerator __instance, EnemySetup enemySetup)
+	    {
+		    // Ensure we don't use too many Photon views
+		    if (PhotonNetwork.ViewCount < PhotonNetwork.MAX_VIEW_IDS - reservedViewCount)
+		    {
+			    viewCountWarning = false;
+			    return true;
+		    }
+
+		    if (!viewCountWarning)
+		    {
+			    viewCountWarning = true;
+			    PluginLoader.StaticLogger.LogWarning($"Multiplayer photon view limit reached! {__instance.EnemiesSpawnTarget}/{EnemyDirector.instance.totalAmount} enemies were spawned!");
+		    }
 		    return false;
 	    }
     }
