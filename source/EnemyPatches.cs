@@ -15,38 +15,34 @@ namespace TierSpawnConfig
 	    private static bool EnemyDirector_FirstSpawnPointAdd(EnemyDirector __instance, EnemyParent _enemyParent)
 	    {
 		    List<LevelPoint> list = SemiFunc.LevelPointsGetAll().Where(x => !x.Truck).ToList();
-
-		    if (PluginLoader.closestSpawnPoints.Value)
+		    float num = !PluginLoader.closestSpawnPoints.Value ? 0 : float.MaxValue;
+		    LevelPoint levelPoint = null;
+		    foreach (LevelPoint item in list)
 		    {
-			    float num = float.MaxValue;
-			    LevelPoint levelPoint = null;
-			    foreach (LevelPoint item in list)
+			    if (__instance.enemyFirstSpawnPoints.Contains(item))
+				    continue;
+			    
+			    float num2 = Vector3.Distance(item.transform.position, LevelGenerator.Instance.LevelPathTruck.transform.position);
+			    if ((!PluginLoader.closestSpawnPoints.Value && num2 > num) || (PluginLoader.closestSpawnPoints.Value && num2 < num))
 			    {
-				    if (__instance.enemyFirstSpawnPoints.Contains(item))
-					    continue;
-				    
-				    float num2 = Vector3.Distance(item.transform.position, LevelGenerator.Instance.LevelPathTruck.transform.position);
-				    if (num2 <= num)
-				    {
-					    num = num2;
-					    levelPoint = item;
-				    }
-			    }
-			    if (levelPoint)
-			    {
-				    _enemyParent.firstSpawnPoint = levelPoint;
-				    __instance.enemyFirstSpawnPoints.Add(levelPoint);
+				    num = num2;
+				    levelPoint = item;
 			    }
 		    }
-		    
+		    if (levelPoint)
+		    {
+			    _enemyParent.firstSpawnPoint = levelPoint;
+			    __instance.enemyFirstSpawnPoints.Add(levelPoint);
+		    }
+
 		    // Clear list if all spawn points used
 		    if (__instance.enemyFirstSpawnPoints.Count >= list.Count)
 		    {
 			    __instance.enemyFirstSpawnPoints.Clear();
-			    PluginLoader.StaticLogger.LogDebug("All spawn points are used, clearing list");
+			    PluginLoader.StaticLogger.LogDebug($"All {list.Count} spawn points are used, clearing list");
 		    }
-
-		    return !PluginLoader.closestSpawnPoints.Value;
+		    
+		    return false;
 	    }
 
 	    [HarmonyPatch(typeof(EnemyDirector), "AmountSetup")]
@@ -142,6 +138,53 @@ namespace TierSpawnConfig
 	    private static void EnemyDirector_Start(EnemyDirector __instance)
 	    {
 		    __instance.debugNoSpawnedPause = true;
+	    }
+	    
+	    [HarmonyPatch(typeof(SemiFunc), "EnemyPhysObjectSphereCheck")]
+	    [HarmonyPrefix]
+	    private static bool SemiFunc_EnemyPhysObjectSphereCheck(Vector3 _position, float _radius, ref bool __result)
+	    {
+		    if (!PluginLoader.skipCollisionCheck.Value)
+			    return true;
+	
+		    __result = Physics.OverlapSphere(_position, _radius, SemiFunc.LayerMaskGetPhysGrabObject())
+			    .Where(x => x.GetComponent<EnemyParent>() != null).ToArray().Length != 0;
+		    return false;
+	    }
+	    
+	    [HarmonyPatch(typeof(SemiFunc), "EnemyPhysObjectBoundingBoxCheck")]
+	    [HarmonyPrefix]
+	    private static bool SemiFunc_EnemyPhysObjectBoundingBoxCheck(Vector3 _currentPosition, Vector3 _checkPosition, Rigidbody _rigidbody, ref bool __result)
+	    {
+		    if (!PluginLoader.skipCollisionCheck.Value)
+			    return true;
+
+		    Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+		    foreach (Collider collider in _rigidbody.GetComponentsInChildren<Collider>())
+		    {
+			    if (bounds.size == Vector3.zero)
+			    {
+				    bounds = collider.bounds;
+			    }
+			    else
+			    {
+				    bounds.Encapsulate(collider.bounds);
+			    }
+		    }
+		    Vector3 vector = _currentPosition - _rigidbody.transform.position;
+		    Vector3 vector2 = bounds.center - _rigidbody.transform.position;
+		    bounds.center = _checkPosition - vector + vector2;
+		    bounds.size *= 1.2f;
+		    Collider[] array = Physics.OverlapBox(bounds.center, bounds.extents, Quaternion.identity, SemiFunc.LayerMaskGetPhysGrabObject());
+		    for (int i = 0; i < array.Length; i++)
+		    {
+			    if (array[i].GetComponentInParent<Rigidbody>() != _rigidbody && array[i].GetComponentInParent<EnemyRigidbody>() == null)
+			    {
+					__result = true;
+			    }
+		    }
+		    __result = false;
+		    return false;
 	    }
     }
 }

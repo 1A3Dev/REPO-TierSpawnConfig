@@ -7,13 +7,22 @@
 
 ### Information
 
-This mod allows you to configure how many enemies will spawn per tier.
+This mod was mainly designed to allow streamers to increase enemy spawns as a challenge however there's probably other use cases as well, the things you can configure are:
+
+- How many enemies spawn of each tier
+- How long it takes for enemies to despawn if nobody is nearby
+- How long it takes for enemies to respawn
+- Which spawn groups should be disabled - for example `Enemy - Thin Man,Enemy - Slow Walker` would stop the shadow child and trudge from spawning
+
+### Enemy Spawn Groups
+
+You can view the latest list of the latest enemy spawn groups at: https://1a3.uk/games/repo/diffs/beta?tab=3&tabEnemies=1
+
+> NOTE: The spawn groups that start with "Enemy Group - " are excluded from tier 3 since they are just groups of enemies from the other tiers.
 
 ### Support
 
 You can get support in any the following places:
-
-<!-- - The [thread](https://discord.com/channels/1168655651455639582/1282200504318820374) in the [REPO Modding Discord Server](https://discord.gg/repomodding) -->
 
 - [GitHub Issues](https://github.com/1A3Dev/REPO-TierSpawnConfig/issues)
 - [My Discord Server](https://discord.gg/CKqVFPRtKp)

@@ -31,6 +31,7 @@ namespace TierSpawnConfig
         public static ConfigEntry<int> tier3EnemyCount;
         public static ConfigEntry<string> blacklistedEnemies;
         public static ConfigEntry<bool> closestSpawnPoints;
+        public static ConfigEntry<bool> skipCollisionCheck;
         public static ConfigEntry<int> despawnedTimer;
         public static ConfigEntry<int> spawnedTimer;
 
@@ -47,12 +48,13 @@ namespace TierSpawnConfig
             
             StaticLogger.LogInfo("Patches Loaded");
             
-            tier1EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 1", 0, new ConfigDescription("How many tier 1 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
+            tier1EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 1", 50, new ConfigDescription("How many tier 1 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
             tier2EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 2", 50, new ConfigDescription("How many tier 2 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
             tier3EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 3", 50, new ConfigDescription("How many tier 3 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
-            blacklistedEnemies = StaticConfig.Bind("Spawn Count", "Blacklisted Groups", "Enemy - Thin Man", "Which enemy groups should not be spawned?");
+            blacklistedEnemies = StaticConfig.Bind("Spawn Count", "Blacklisted Groups", "Enemy - Hidden", "Which enemy groups should be disabled? This is a comma-separated list of enemy spawn groups. For the full list check the mod's thunderstore page.");
             
-            closestSpawnPoints = StaticConfig.Bind("Spawn Location", "Closest", false, "Reverse the order that spawn points are picked from. If enabled, the closest spawn points will be used first, otherwise the furthest ones will be used first.");
+            closestSpawnPoints = StaticConfig.Bind("Spawn Location", "Prioritize Closest Points", true, "Reverse the order that spawn points are picked from. If enabled, the closest spawn points will be used first, otherwise the furthest ones will be used first.");
+            skipCollisionCheck = StaticConfig.Bind("Spawn Location", "Bypass Collision Check", true, "Should enemies be able to spawn on top of each other?");
             
             despawnedTimer = StaticConfig.Bind("Spawn Timer", "Respawn Timer", 0, new ConfigDescription("How many seconds should enemies take to respawn? -1 = Vanilla, 0 = Instant", new AcceptableValueRange<int>(-1, 600)));
             despawnedTimer.SettingChanged += (sender, args) =>
@@ -74,7 +76,7 @@ namespace TierSpawnConfig
             
             harmony.PatchAll(typeof(EnemyPatches));
             
-            overlayEnabled = StaticConfig.Bind("Overlay", "Enabled", false, "Should the overlay be shown?");
+            overlayEnabled = StaticConfig.Bind("Overlay", "Enabled", true, "Should the overlay be shown?");
             
             GameObject testerOverlayObj = new GameObject("TesterOverlay");
             testerOverlayObj.hideFlags = HideFlags.HideAndDontSave;
@@ -96,7 +98,7 @@ namespace TierSpawnConfig
                 return;
             }
 
-            if (SemiFunc.RunIsLevel() && RunManager.instance)
+            if (SemiFunc.RunIsLevel())
             {
                 updateTimer += Time.deltaTime;
                 if (updateTimer >= 5f) // Every 5 seconds
