@@ -11,7 +11,7 @@
     <PropertyGroup>
         <IsThunderstorePackable>true</IsThunderstorePackable>
         <ThunderstoreName>TierSpawnConfig</ThunderstoreName>
-        <ThunderstoreDescription>Various improvements for lobbies</ThunderstoreDescription>
+        <ThunderstoreDescription>Configurable enemy spawning amounts per tier</ThunderstoreDescription>
         <ThunderstoreIconPath>$(ProjectDir)assets/icons/icon.png</ThunderstoreIconPath>
         <HasBepInPlugin>true</HasBepInPlugin>
     </PropertyGroup>
