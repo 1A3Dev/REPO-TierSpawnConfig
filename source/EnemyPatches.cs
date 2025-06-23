@@ -184,6 +184,7 @@ namespace TierSpawnConfig
 			    if (array[i].GetComponentInParent<Rigidbody>() != _rigidbody && array[i].GetComponentInParent<EnemyRigidbody>() == null)
 			    {
 					__result = true;
+					return false;
 			    }
 		    }
 		    __result = false;
