@@ -20,7 +20,7 @@ This mod was mainly designed to allow streamers to increase enemy spawns as a ch
 
 You can view the latest list of the latest enemy spawn groups at: https://1a3.uk/games/repo/diffs/beta?tab=3&tabEnemies=1
 
-> Note: The spawn groups that start with "Enemy Group - " are excluded from tier 3 since they are just groups of enemies from the other tiers.
+> Note: The spawn groups that start with "Enemy Group - " are excluded since they are just groups of enemies from the other tiers.
 
 ### Support
 
@@ -33,7 +33,8 @@ You can get support in any the following places:
 ### Compatibility
 
 - Supported Game Versions:
-  - v0.1.2.46_beta+
+  - v0.1.2.55_beta+
+  - v0.2.0+
 - Not Compatible With:
   - N/A
 

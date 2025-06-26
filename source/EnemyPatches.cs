@@ -15,18 +15,21 @@ namespace TierSpawnConfig
 	    
 	    [HarmonyPatch(typeof(EnemyDirector), "FirstSpawnPointAdd")]
 	    [HarmonyPrefix]
-	    private static bool EnemyDirector_FirstSpawnPointAdd(EnemyDirector __instance, EnemyParent _enemyParent)
+	    private static bool EnemyDirector_FirstSpawnPointAdd_Prefix(EnemyDirector __instance, EnemyParent _enemyParent)
 	    {
-		    List<LevelPoint> list = SemiFunc.LevelPointsGetAll().Where(x => !x.Truck).ToList();
-		    float num = !PluginLoader.closestSpawnPoints.Value ? 0 : float.MaxValue;
+		    if (!PluginLoader.closestSpawnPoints.Value)
+			    return true;
+		    
+		    List<LevelPoint> list = SemiFunc.LevelPointsGetAll();
+		    float num = float.MaxValue;
 		    LevelPoint levelPoint = null;
 		    foreach (LevelPoint item in list)
 		    {
-			    if (__instance.enemyFirstSpawnPoints.Contains(item))
+			    if (item.Truck || __instance.enemyFirstSpawnPoints.Contains(item))
 				    continue;
 			    
 			    float num2 = Vector3.Distance(item.transform.position, LevelGenerator.Instance.LevelPathTruck.transform.position);
-			    if ((!PluginLoader.closestSpawnPoints.Value && num2 > num) || (PluginLoader.closestSpawnPoints.Value && num2 < num))
+			    if (num2 < num)
 			    {
 				    num = num2;
 				    levelPoint = item;
@@ -37,15 +40,21 @@ namespace TierSpawnConfig
 			    _enemyParent.firstSpawnPoint = levelPoint;
 			    __instance.enemyFirstSpawnPoints.Add(levelPoint);
 		    }
-
-		    // Clear list if all spawn points used
-		    if (__instance.enemyFirstSpawnPoints.Count >= list.Count)
-		    {
-			    __instance.enemyFirstSpawnPoints.Clear();
-			    PluginLoader.StaticLogger.LogDebug($"All {list.Count} spawn points are used, clearing list");
-		    }
 		    
 		    return false;
+	    }
+	    
+	    [HarmonyPatch(typeof(EnemyDirector), "FirstSpawnPointAdd")]
+	    [HarmonyPostfix]
+	    private static void EnemyDirector_FirstSpawnPointAdd_Postfix(EnemyDirector __instance)
+	    {
+		    // Clear list if all spawn points used
+		    int totalSpawnPoints = SemiFunc.LevelPointsGetAll().Count(x => !x.Truck);
+		    if (__instance.enemyFirstSpawnPoints.Count >= totalSpawnPoints)
+		    {
+			    PluginLoader.StaticLogger.LogDebug($"{__instance.enemyFirstSpawnPoints.Count}/{totalSpawnPoints} spawn points are used, clearing list");
+			    __instance.enemyFirstSpawnPoints.Clear();
+		    }
 	    }
 
 	    [HarmonyPatch(typeof(EnemyDirector), "AmountSetup")]
