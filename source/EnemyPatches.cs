@@ -61,13 +61,33 @@ namespace TierSpawnConfig
 	    [HarmonyPrefix]
 	    private static bool EnemyDirector_AmountSetup(EnemyDirector __instance)
 	    {
-		    __instance.amountCurve1Value = PluginLoader.tier1EnemyCount.Value;
-		    __instance.amountCurve2Value = PluginLoader.tier2EnemyCount.Value;
-		    __instance.amountCurve3Value = PluginLoader.tier3EnemyCount.Value;
+		    if (PluginLoader.tier1EnemyCount.Value >= 0)
+			    __instance.amountCurve1Value = PluginLoader.tier1EnemyCount.Value;
+		    else if (SemiFunc.RunGetDifficultyMultiplier2() > 0f)
+			    __instance.amountCurve1Value = (int)__instance.amountCurve1_2.Evaluate(SemiFunc.RunGetDifficultyMultiplier2());
+		    else
+			    __instance.amountCurve1Value = (int)__instance.amountCurve1_1.Evaluate(SemiFunc.RunGetDifficultyMultiplier1());
+		    
+		    if (PluginLoader.tier2EnemyCount.Value >= 0)
+			    __instance.amountCurve2Value = PluginLoader.tier2EnemyCount.Value;
+		    else if (SemiFunc.RunGetDifficultyMultiplier2() > 0f)
+			    __instance.amountCurve2Value = (int)__instance.amountCurve2_2.Evaluate(SemiFunc.RunGetDifficultyMultiplier2());
+		    else
+			    __instance.amountCurve2Value = (int)__instance.amountCurve2_1.Evaluate(SemiFunc.RunGetDifficultyMultiplier1());
+		    
+		    if (PluginLoader.tier3EnemyCount.Value >= 0)
+			    __instance.amountCurve3Value = PluginLoader.tier3EnemyCount.Value;
+		    else if (SemiFunc.RunGetDifficultyMultiplier2() > 0f)
+			    __instance.amountCurve3Value = (int)__instance.amountCurve3_2.Evaluate(SemiFunc.RunGetDifficultyMultiplier2());
+		    else
+			    __instance.amountCurve3Value = (int)__instance.amountCurve3_1.Evaluate(SemiFunc.RunGetDifficultyMultiplier1());
+
 		    __instance.enemyListCurrent.Clear();
+		    
 		    List<string> enemyBlacklist = PluginLoader.blacklistedEnemies.Value.Split(',').Select(x => x.Trim()).ToList();
 		    PluginLoader.StaticLogger.LogInfo($"Setting enemy counts: Tier 1: {__instance.amountCurve1Value}, Tier 2: {__instance.amountCurve2Value}, Tier 3: {__instance.amountCurve3Value}");
 		    PluginLoader.StaticLogger.LogInfo($"Blacklisted Enemies: {string.Join(", ", enemyBlacklist)}");
+		    
 		    for (int i = 0; i < __instance.amountCurve3Value; i++)
 		    {
 			    __instance.PickEnemies(__instance.enemiesDifficulty3.Where(x => !x.name.StartsWith("Enemy Group - ") && !enemyBlacklist.Contains(x.name)).ToList());
@@ -80,6 +100,7 @@ namespace TierSpawnConfig
 		    {
 			    __instance.PickEnemies(__instance.enemiesDifficulty1.Where(x => !enemyBlacklist.Contains(x.name)).ToList());
 		    }
+		    
 		    if (SemiFunc.RunGetDifficultyMultiplier3() > 0f)
 		    {
 			    __instance.despawnedTimeMultiplier = __instance.despawnTimeCurve_2.Evaluate(SemiFunc.RunGetDifficultyMultiplier3());
@@ -92,6 +113,7 @@ namespace TierSpawnConfig
 		    {
 			    __instance.despawnedTimeMultiplier = 1f;
 		    }
+		    
 		    __instance.totalAmount = __instance.amountCurve1Value + __instance.amountCurve2Value + __instance.amountCurve3Value;
 		    
 		    return false;

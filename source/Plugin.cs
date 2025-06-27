@@ -48,9 +48,9 @@ namespace TierSpawnConfig
             
             StaticLogger.LogInfo("Patches Loaded");
             
-            tier1EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 1", 50, new ConfigDescription("How many tier 1 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
-            tier2EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 2", 50, new ConfigDescription("How many tier 2 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
-            tier3EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 3", 50, new ConfigDescription("How many tier 3 enemy groups should be spawned?", new AcceptableValueRange<int>(0, 500)));
+            tier1EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 1", 50, new ConfigDescription("How many tier 1 enemy groups should be spawned? -1 = Vanilla, 0 = None", new AcceptableValueRange<int>(-1, 500)));
+            tier2EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 2", 50, new ConfigDescription("How many tier 2 enemy groups should be spawned? -1 = Vanilla, 0 = None", new AcceptableValueRange<int>(-1, 500)));
+            tier3EnemyCount = StaticConfig.Bind("Spawn Count", "Tier 3", 50, new ConfigDescription("How many tier 3 enemy groups should be spawned? -1 = Vanilla, 0 = None", new AcceptableValueRange<int>(-1, 500)));
             blacklistedEnemies = StaticConfig.Bind("Spawn Count", "Blacklisted Groups", "Enemy - Ceiling Eye,Enemy - Hidden,Enemy - Thin Man", "Which enemy groups should be disabled? This is a comma-separated list of enemy spawn groups. For the full list check the mod's thunderstore page.");
             
             closestSpawnPoints = StaticConfig.Bind("Spawn Location", "Prioritize Closest Points", true, "Reverse the order that spawn points are picked from. If enabled, the closest spawn points will be used first, otherwise the furthest ones will be used first.");

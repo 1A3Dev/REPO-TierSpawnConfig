@@ -1,3 +1,7 @@
+### 1.0.3
+
+- Allowed using vanilla spawn amounts by setting the spawn count of a tier to -1
+
 ### 1.0.2
 
 - When "Prioritize closest points" is disabled it no longer overrides the vanilla logic for choosing the spawn location (since vanilla now excludes level points in the truck)
