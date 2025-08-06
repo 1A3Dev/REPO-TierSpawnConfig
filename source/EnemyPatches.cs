@@ -90,7 +90,7 @@ namespace TierSpawnConfig
 		    
 		    for (int i = 0; i < __instance.amountCurve3Value; i++)
 		    {
-			    __instance.PickEnemies(__instance.enemiesDifficulty3.Where(x => !x.name.StartsWith("Enemy Group - ") && !enemyBlacklist.Contains(x.name)).ToList());
+			    __instance.PickEnemies(__instance.enemiesDifficulty3.Where(x => !enemyBlacklist.Contains(x.name) && (PluginLoader.tier3EnemyGroups.Value || !x.name.StartsWith("Enemy Group - "))).ToList());
 		    }
 		    for (int j = 0; j < __instance.amountCurve2Value; j++)
 		    {

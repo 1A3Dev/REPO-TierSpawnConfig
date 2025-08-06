@@ -1,3 +1,7 @@
+### 1.0.4
+
+- Added a config option to allow re-enabling tier 3 enemy groups
+
 ### 1.0.3
 
 - Allowed using vanilla spawn amounts by setting the spawn count of a tier to -1
